@@ -1,0 +1,5 @@
+*.o
+*.mcp
+*.cof
+*.hex
+*.map
