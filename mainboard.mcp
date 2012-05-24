@@ -1,7 +1,7 @@
 [HEADER]
 magic_cookie={66E99B07-E706-4689-9E80-9B2582898A13}
 file_version=1.0
-device=PIC24FJ256GB108
+device=PIC24FJ64GB108
 [PATH_INFO]
 BuildDirPolicy=BuildDirIsProjectDir
 dir_src=
@@ -31,6 +31,7 @@ file_003=.
 file_004=.
 file_005=.
 file_006=.
+file_007=.
 [GENERATED_FILES]
 file_000=no
 file_001=no
@@ -39,6 +40,7 @@ file_003=no
 file_004=no
 file_005=no
 file_006=no
+file_007=no
 [OTHER_FILES]
 file_000=no
 file_001=no
@@ -47,6 +49,7 @@ file_003=no
 file_004=no
 file_005=no
 file_006=no
+file_007=no
 [FILE_INFO]
 file_000=src\main.c
 file_001=src\oscillator.c
@@ -55,6 +58,7 @@ file_003=src\uart.c
 file_004=src\device.h
 file_005=src\oscillator.h
 file_006=src\uart.h
+file_007=src\protocol.h
 [SUITE_INFO]
 suite_guid={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 suite_state=
