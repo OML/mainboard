@@ -2,4 +2,5 @@
 
 void configure_oscillator(void)
 {
+
 }
