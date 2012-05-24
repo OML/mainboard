@@ -15,6 +15,14 @@ struct {
 } buffers;
 	
 
+void _ISR _U1RXInterrupt()
+{
+}
+
+void _ISR _U1TXInterrupt()
+{
+}
+
 void init_buffers(void)
 {
 	int i;
@@ -45,10 +53,32 @@ void init_rps(void)
 	RPINR27 = 17; 			// U4RX
 }
 
+void init_interrupts(void)
+{
+	IFC0bits.U1TXIF = 0;
+	IFC0bits.U1RXIF = 0;
+	IFC1bits.U2TXIF = 0;
+	IFC1bits.U2RXIF = 0;
+	IFC2bits.U3TXIF = 0;
+	IFC2bits.U3RXIF = 0;
+	IFC3bits.U4TXIF = 0;
+	IFC3bits.U4RXIF = 0;
+
+	IEC0bits.U1TXIE = 1;
+	IEC0bits.U1RXIE = 1;
+	IEC1bits.U2TXIE = 1;
+	IEC1bits.U2RXIE = 1;
+	IEC2bits.U3TXIE = 1;
+	IEC2bits.U3RXIE = 1;
+	IEC3bits.U4TXIE = 1;
+	IEC3bits.U4RXIE = 1;
+}
+
 void initialize_uarts(void)
 {
  	init_rps();
 	init_buffers();
+	init_interrupts();
 
 	U1MODEbits.UARTEN = 0;
 	U2MODEbits.UARTEN = 0;
