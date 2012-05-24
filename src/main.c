@@ -1,4 +1,4 @@
-#include <p24Fxxxx.h>
+#include "device.h"
 
 int main()
 {
