@@ -14,6 +14,12 @@ void _ISR __attribute__((no_auto_psv)) _U1TXInterrupt()
 {
 }
 
+void initialize_buffer(struct uart_ep_buffer* buf)
+{
+        buf->pos = 0;
+        buf->length = 0;
+}
+
 void init_buffers(void)
 {
 	int i;
@@ -28,8 +34,10 @@ void init_buffers(void)
 	uart[2].txreg = &U3TXREG;
 	uart[3].txreg = &U4TXREG;
 
-	for(i = 0; i < 4; i++)
-		uart[i].pos = 0;
+	for(i = 0; i < 4; i++) {
+                initialize_uart_buffer(&uart[i].tx_buffer);
+                initialize_uart_buffer(&uart[i].rx_buffer);
+        }       
 }
 
 void init_rps(void)
@@ -38,9 +46,9 @@ void init_rps(void)
 	RPINR18 = 4;			// U1RX
 	RPOR3bits.RP6R = 5;		// U2TX
 	RPINR19 = 7;			// U2RX
-	RPOR4bits.RP8R = 28;	// U3TX
+	RPOR4bits.RP8R = 28;	        // U3TX
 	RPINR17 = 9;			// U3RX
-	RPOR5bits.RP10R = 30;	// U4TX
+	RPOR5bits.RP10R = 30;	        // U4TX
 	RPINR27 = 17; 			// U4RX
 }
 
