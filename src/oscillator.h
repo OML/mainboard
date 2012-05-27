@@ -4,6 +4,6 @@
 #define F_CLK 32000000
 #define FCY (F_CLK/2)
 
-void configure_oscilator(void);
+void configure_oscillator(void);
 
 #endif /* src/oscillator.h */

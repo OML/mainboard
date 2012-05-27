@@ -15,11 +15,11 @@ struct {
 } buffers;
 	
 
-void _ISR _U1RXInterrupt(void)
+void _ISR __attribute__((no_auto_psv)) _U1RXInterrupt(void)
 { 
 }
 
-void _ISR _U1TXInterrupt()
+void _ISR __attribute__((no_auto_psv)) _U1TXInterrupt()
 {
 }
 
