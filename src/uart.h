@@ -3,7 +3,17 @@
 
 #define BAUD 38400
 
-#define BUF_LENGTH 32
+#define BUF_LENGTH 64
+
+
+struct uartrep
+{ 
+	volatile unsigned int* rcreg;
+	volatile unsigned int* txreg;
+	volatile char buffer[BUF_LENGTH];
+	volatile int pos;
+	volatile int exp_length;
+};
 
 struct uart_ep_buffer
 {

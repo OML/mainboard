@@ -14,7 +14,7 @@ void _ISR __attribute__((no_auto_psv)) _U1TXInterrupt()
 {
 }
 
-void initialize_buffer(struct uart_ep_buffer* buf)
+void initialize_uart_buffer(struct uart_ep_buffer* buf)
 {
         buf->pos = 0;
         buf->length = 0;
