@@ -2,17 +2,8 @@
 #include "device.h"
 #include "oscillator.h"
 
-#define BUF_LENGTH 32
+struct uart_endpoint uart[4];
 
-struct {
-	struct { 
-		volatile unsigned int* rcreg;
-		volatile unsigned int* txreg;
-		volatile char buffer[BUF_LENGTH];
-		volatile int pos;
-		volatile int exp_length;
-	} uart[4];
-} buffers;
 	
 
 void _ISR __attribute__((no_auto_psv)) _U1RXInterrupt(void)
@@ -27,18 +18,18 @@ void init_buffers(void)
 {
 	int i;
 
-	buffers.uart[0].rcreg = &U1RXREG;
-	buffers.uart[1].rcreg = &U2RXREG;
-	buffers.uart[2].rcreg = &U3RXREG;
-	buffers.uart[3].rcreg = &U4RXREG;
+        uart[0].rcreg = &U1RXREG;
+	uart[1].rcreg = &U2RXREG;
+        uart[2].rcreg = &U3RXREG;
+	uart[3].rcreg = &U4RXREG;
 
-	buffers.uart[0].txreg = &U1TXREG;
-	buffers.uart[1].txreg = &U2TXREG;
-	buffers.uart[2].txreg = &U3TXREG;
-	buffers.uart[3].txreg = &U4TXREG;
+	uart[0].txreg = &U1TXREG;
+	uart[1].txreg = &U2TXREG;
+	uart[2].txreg = &U3TXREG;
+	uart[3].txreg = &U4TXREG;
 
 	for(i = 0; i < 4; i++)
-		buffers.uart[i].pos = 0;
+		uart[i].pos = 0;
 }
 
 void init_rps(void)
