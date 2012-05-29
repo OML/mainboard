@@ -101,3 +101,8 @@ void initialize_uarts(void)
 	U3MODEbits.UARTEN = 1;
 	U4MODEbits.UARTEN = 1;
 }
+
+void uart_transmit(const char* data, int length)
+{
+#warning "Wouter, fix me!"
+}
