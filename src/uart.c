@@ -146,3 +146,8 @@ void uart_transmit(int uid, const char* data, int length)
 	}
 
 }
+
+void uart_read(int uid, char* data, int length)
+{
+        memcpy(data, (char*)(uart[uid].rx_buffer.data) + sizeof(uint16_t), length);
+}

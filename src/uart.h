@@ -31,5 +31,6 @@ void initialize_uarts(void);
 
 
 void uart_transmit(int uid, const char* data, int length);
+void uart_read(int uid, char* data, int length);
 
 #endif /* src/uart.h */
