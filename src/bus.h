@@ -6,6 +6,7 @@
 #include <stdint.h>
 
 #define N_BUSSES 4
+#define BUS_TIMEOUT 250
 
 enum {
         DT_MOTOR,
