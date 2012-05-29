@@ -2,10 +2,13 @@
 #include "oscillator.h"
 #include "uart.h"
 #include "bus.h"
+#include "timer.h"
 
 int main()
 {
 	configure_oscillator();
+        timer_start();
+
 	initialize_uarts();
 
         initialize_bus();
