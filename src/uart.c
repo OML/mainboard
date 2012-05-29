@@ -15,12 +15,40 @@ struct {
 } buffers;
 	
 
-void _ISR _U1RXInterrupt(void)
-{ 
+void _ISR _U1RXInterrupt()
+{  
+	int cur = 0;
+	
+	while(U1RXREG != ' ')
+	{
+		buffers.uart[0].buffer[cur] = U1RXREG;
+		if(cur == 0)
+		{
+			if(buffers.uart[0].buffer[0] == 'h')
+				buffers.uart[0].exp_length = 11;
+
+			if(buffers.uart[0].buffer[0] == 'e')
+				buffers.uart[0].exp_length = 3; // dummy value 3
+			
+		}
+		cur ++;
+		
+		if(cur == buffers.uart[0].exp_length)
+		{
+			read(1);
+			cur = 0;
+			buffers.uart[0].exp_length = 0;			
+		}
+	}
 }
 
 void _ISR _U1TXInterrupt()
 {
+}
+
+void read(int x)
+{
+	// im not sure about this, what should this do?
 }
 
 void init_buffers(void)
