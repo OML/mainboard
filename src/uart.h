@@ -6,15 +6,6 @@
 #define BUF_LENGTH 64
 
 
-struct uartrep
-{ 
-	volatile unsigned int* rcreg;
-	volatile unsigned int* txreg;
-	volatile char buffer[BUF_LENGTH];
-	volatile int pos;
-	volatile int exp_length;
-};
-
 struct uart_ep_buffer
 {
         volatile char data[BUF_LENGTH];
@@ -27,8 +18,8 @@ struct uart_ep_buffer
 
 struct uart_endpoint
 { 
-	volatile unsigned int* rcreg;
-	volatile unsigned int* txreg;
+        volatile unsigned int* rcreg;
+        volatile unsigned int* txreg;
         struct uart_ep_buffer rx_buffer;
         struct uart_ep_buffer tx_buffer;
 };
@@ -39,6 +30,6 @@ void initialize_uart_buffer(struct uart_ep_buffer* b);
 void initialize_uarts(void);
 
 
-void uart_transmit(int uart, const char* data, int length);
+void uart_transmit(int uid, const char* data, int length);
 
 #endif /* src/uart.h */
