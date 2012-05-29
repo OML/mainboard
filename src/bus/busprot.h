@@ -7,6 +7,16 @@ typedef uint16_t bus_addr_t;
 typedef uint16_t bus_devtype_t;
 typedef uint16_t bus_event_type_t;
 
+
+// Device types
+enum {
+        DT_MOTOR,
+        DT_DUAL_MOTOR,
+        DT_ACCU,
+        DT_IPC,
+};
+
+// Opcodes
 enum
 {
         BUSOP_HELLO = 0,

@@ -10,13 +10,6 @@
 #define N_BUSSES 4
 #define BUS_TIMEOUT 250
 
-enum {
-        DT_MOTOR,
-        DT_DUAL_MOTOR,
-        DT_ACCU,
-        DT_IPC,
-};
-
 struct bus_node
 {
         struct bus_node* next;
