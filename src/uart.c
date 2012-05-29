@@ -10,6 +10,7 @@ struct uart_endpoint uart[4];
 
 void _ISR __attribute__((no_auto_psv)) _U1RXInterrupt()
 {  
+	
 	struct uart_ep_buffer* buf = &uart[0].rx_buffer;
 
 	while(U1STAbits.URXDA == 1)
@@ -22,7 +23,7 @@ void _ISR __attribute__((no_auto_psv)) _U1RXInterrupt()
 		if(buf->pos == 1)
 			buf->length = le16toh(*(uint16_t*)&buf->data); //make this buffer an integer
 		
-		buf->pos ++;
+		buf->pos++;
 	}
 }
 
@@ -121,13 +122,13 @@ void initialize_uarts(void)
 
 void uart_transmit(int uid, const char* data, int length)
 {
-	memcpy((char*)uart[uid].tx_buffer.data, data, length);
+	memcpy((char*)uart[uid].tx_buffer.data, data, length); // put the data in the buffer
 	int i;
 
 	for(i = 0; i < length; i++)
 	{
-		while(U1STAbits.UTXBF == 1);
-		*(uart[uid].txreg) = data[i];
+		while(U1STAbits.UTXBF == 1);  // wait if buffer is full
+		*(uart[uid].txreg) = data[i]; // write data to buffer
 	}
 
 }

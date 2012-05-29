@@ -30,6 +30,6 @@ void initialize_uart_buffer(struct uart_ep_buffer* b);
 void initialize_uarts(void);
 
 
-void uart_transmit(int uart, const char* data, int length);
+void uart_transmit(int uid, const char* data, int length);
 
 #endif /* src/uart.h */
