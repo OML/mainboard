@@ -2,6 +2,7 @@
 #include "device.h"
 #include "endian.h"
 #include "oscillator.h"
+#include <string.h>
 
 struct uart_endpoint uart[4];
 
@@ -9,18 +10,19 @@ struct uart_endpoint uart[4];
 
 void _ISR __attribute__((no_auto_psv)) _U1RXInterrupt()
 {  
-	uart_ep_buffer& buf = uart[0].rx_buffer;
+	struct uart_ep_buffer* buf = &uart[0].rx_buffer;
+
 	while(U1STAbits.URXDA == 1)
 	{
-		if(buf.pos == buf.length)
-			buf.pos = 0;
+		if(buf->pos == buf->length)
+			buf->pos = 0;
 
-		buf.data[buf.pos] = U1RXREG;	
+		buf->data[buf->pos] = U1RXREG;	
 
-		if(buf.pos == 1)
-			buf.length = le16toh(*(uint16_t*)&buf.data); //make this buffer an integer
+		if(buf->pos == 1)
+			buf->length = le16toh(*(uint16_t*)&buf->data); //make this buffer an integer
 		
-		buf.pos ++;
+		buf->pos ++;
 	}
 }
 
@@ -57,14 +59,14 @@ void init_buffers(void)
 
 void init_rps(void)
 {
-	RPOR1bits.RP3R = 3;		// U1TX
-	RPINR18 = 4;			// U1RX
-	RPOR3bits.RP6R = 5;		// U2TX
-	RPINR19 = 7;			// U2RX
+	RPOR1bits.RP3R = 3;				// U1TX
+	RPINR18bits.U1RXR = 4;			// U1RX = RP4
+	RPOR3bits.RP6R = 5;				// U2TX
+	RPINR19bits.U2RXR = 7;			// U2RX
 	RPOR4bits.RP8R = 28;	        // U3TX
-	RPINR17 = 9;			// U3RX
+	RPINR17bits.U3RXR = 9;			// U3RX
 	RPOR5bits.RP10R = 30;	        // U4TX
-	RPINR27 = 17; 			// U4RX
+	RPINR27bits.U4RXR = 17; 		// U4RX
 }
 
 void init_interrupts(void)
@@ -113,11 +115,19 @@ void initialize_uarts(void)
 
 	U1MODEbits.UARTEN = 1;
 	U2MODEbits.UARTEN = 1;
-	U3MODEbits.UARTEN = 1;
+	U3MODEbits.UARTEN = 1; 
 	U4MODEbits.UARTEN = 1;
 }
 
-void uart_transmit(int uart, const char* data, int length)
+void uart_transmit(int uid, const char* data, int length)
 {
-#warning "Wouter, fix me!"
+	memcpy((char*)uart[uid].tx_buffer.data, data, length);
+	int i;
+
+	for(i = 0; i < length; i++)
+	{
+		while(U1STAbits.UTXBF == 1);
+		*(uart[uid].txreg) = data[i];
+	}
+
 }
