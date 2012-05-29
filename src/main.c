@@ -1,8 +1,8 @@
+#include "timer.h"
 #include "device.h"
 #include "oscillator.h"
 #include "uart.h"
 #include "bus.h"
-#include "timer.h"
 
 int main()
 {

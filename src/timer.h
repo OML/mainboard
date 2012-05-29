@@ -1,7 +1,7 @@
 #ifndef _TIMER_H
 #define _TIMER_H
 
-#include <stdint.h>
+#include "device.h"
 
 uint32_t rt_timer(void);
 

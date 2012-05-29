@@ -2,8 +2,7 @@
 #define _SRC_BUS_H
 
 #include "uart.h"
-
-#include <stdint.h>
+#include "device.h"
 
 #define N_BUSSES 4
 #define BUS_TIMEOUT 250
@@ -12,6 +11,7 @@ enum {
         DT_MOTOR,
         DT_DUAL_MOTOR,
         DT_ACCU,
+        DT_IPC,
 };
 
 struct bus_node
@@ -50,5 +50,11 @@ struct bus_hello
         struct bus_opc opcode;
         uint16_t addr;
 } __attribute__((packed));
+
+struct bus_hello_reply
+{
+        struct bus_opc opcode;
+        uint16_t devtype;
+};
 
 #endif /* src/bus.h */
