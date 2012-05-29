@@ -28,13 +28,6 @@ struct bus_opc
         uint8_t op;
 } __attribute__((packed));
 
-struct bus_hello
-{
-        struct bus_opc opcode;
-        bus_addr_t addr;
-} __attribute__((packed));
-
-
 
 struct bus_header
 {
@@ -43,14 +36,22 @@ struct bus_header
 } __attribute__((packed));
 
 
+struct bus_hello
+{
+        struct bus_header hdr;
+} __attribute__((packed));
+
+
 struct bus_hello_reply
 {
+        struct bus_header hdr;
         bus_devtype_t devtype;
-};
+} __attribute__((packed));
 
 struct bus_event_header
 {
+        struct bus_header hdr;
         bus_event_type_t event_type;
-};
+} __attribute__((packed));
 
 #endif /* busprot.h */

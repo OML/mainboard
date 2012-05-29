@@ -1,6 +1,7 @@
-#include "bus/bus.h"
+#include "bus.h"
 
 #include "timer.h"
+#include "uart.h"
 
 #include <stdlib.h>
 
@@ -11,18 +12,19 @@ void initialize_bus(void)
         int i;
         uint16_t addr = 0;
         volatile uint32_t start;
-        struct bus_hello pa;
+        struct bus_hello hello;
         struct bus_node* node;
+
+        hello.hdr.opcode.op = BUSOP_HELLO;
 
         for(i = 0; i < N_BUSSES; i++) {
                 bus[i].layout = NULL;
                 bus[i].uart = &uart[i];
                 do {
-                        pa.opcode.op = BUSOP_HELLO;
-                        pa.addr = addr++;
+                        hello.hdr.addr = addr++;
                 
                         start = rt_timer();
-                        uart_transmit(i, (char*)&pa, sizeof(struct bus_hello));
+                        uart_transmit(i, (char*)&hello, sizeof(struct bus_hello));
                         while(rt_timer() - start < BUS_TIMEOUT) {
                                 if(UART_EP_READY(uart[i].rx_buffer))
                                         break;
