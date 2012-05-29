@@ -1,5 +1,6 @@
 #include "uart.h"
 #include "device.h"
+#include "endian.h"
 #include "oscillator.h"
 
 struct uart_endpoint uart[4];
@@ -8,28 +9,18 @@ struct uart_endpoint uart[4];
 
 void _ISR __attribute__((no_auto_psv)) _U1RXInterrupt()
 {  
-	int cur = 0;
-	
-	while(U1RXREG != ' ')
+	uart_ep_buffer& buf = uart[0].rx_buffer;
+	while(U1STAbits.URXDA == 1)
 	{
-		buffers.uart[0].buffer[cur] = U1RXREG;
-		if(cur == 0)
-		{
-			if(buffers.uart[0].buffer[0] == 'h')
-				buffers.uart[0].exp_length = 11;
+		if(buf.pos == buf.length)
+			buf.pos = 0;
 
-			if(buffers.uart[0].buffer[0] == 'e')
-				buffers.uart[0].exp_length = 3; // dummy value 3
-			
-		}
-		cur ++;
+		buf.data[buf.pos] = U1RXREG;	
+
+		if(buf.pos == 1)
+			buf.length = le16toh(*(uint16_t*)&buf.data); //make this buffer an integer
 		
-		if(cur == buffers.uart[0].exp_length)
-		{
-			read(1);
-			cur = 0;
-			buffers.uart[0].exp_length = 0;			
-		}
+		buf.pos ++;
 	}
 }
 
@@ -43,18 +34,14 @@ void initialize_uart_buffer(struct uart_ep_buffer* buf)
         buf->length = 0;
 }
 
-void read(int x)
-{
-	// im not sure about this, what should this do?
-}
 
 void init_buffers(void)
 {
 	int i;
 
-        uart[0].rcreg = &U1RXREG;
+    uart[0].rcreg = &U1RXREG;
 	uart[1].rcreg = &U2RXREG;
-        uart[2].rcreg = &U3RXREG;
+    uart[2].rcreg = &U3RXREG;
 	uart[3].rcreg = &U4RXREG;
 
 	uart[0].txreg = &U1TXREG;
