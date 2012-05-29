@@ -102,7 +102,7 @@ void initialize_uarts(void)
 	U4MODEbits.UARTEN = 1;
 }
 
-void uart_transmit(const char* data, int length)
+void uart_transmit(int uart, const char* data, int length)
 {
 #warning "Wouter, fix me!"
 }
