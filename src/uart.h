@@ -23,7 +23,7 @@ struct uart_ep_buffer
 };
 
 #define UART_EP_READY(ep) \
-        ((ep).pos == (ep).length)
+        (((ep).pos == (ep).length) && (ep).pos != 0)
 
 struct uart_endpoint
 { 
