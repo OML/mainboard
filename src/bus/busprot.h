@@ -34,17 +34,22 @@ struct bus_hello
         bus_addr_t addr;
 } __attribute__((packed));
 
-struct bus_hello_reply
+
+
+struct bus_header
 {
         struct bus_opc opcode;
+        bus_addr_t addr;
+} __attribute__((packed));
+
+
+struct bus_hello_reply
+{
         bus_devtype_t devtype;
 };
 
 struct bus_event_header
 {
-        struct bus_opc opcode;
-        bus_addr_t addr;
-
         bus_event_type_t event_type;
 };
 
