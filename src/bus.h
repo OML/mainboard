@@ -17,8 +17,8 @@ struct bus_node
 {
         struct bus_node* next;
 
-        int devid;
         int devtype;
+        uint16_t addr;
 };
 
 struct bus_descriptor
@@ -41,7 +41,13 @@ enum
 
 struct bus_opc
 {
-        uint8_t opcode;
+        uint8_t op;
+} __attribute__((packed));
+
+struct bus_hello
+{
+        struct bus_opc opcode;
+        uint16_t addr;
 } __attribute__((packed));
 
 #endif /* src/bus.h */
