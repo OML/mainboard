@@ -15,7 +15,7 @@ void _ISR __attribute__((no_auto_psv)) _U1RXInterrupt()
 
 	while(U1STAbits.URXDA == 1)
 	{
-		if(buf->pos == buf->length)
+		if(buf->pos == buf->length && buf->pos != 0)
 			buf->pos = 0;
 
 		buf->data[buf->pos] = U1RXREG;	
@@ -137,12 +137,8 @@ void uart_transmit(int uid, const char* data, int length)
 
 	for(i = 0; i < length; i++)
 	{
-		while(U1STAbits.UTXBF == 0) { // wait when buffer is full
-			*(uart[uid].txreg) = data[i]; // write data to buffer
-			U1TXREG = uart[uid].tx_buffer.data[i];
-			if(i == length)
-				break;
-		}
+		while(U1STAbits.UTXBF == 1);
+		*(uart[uid].txreg) = data[i]; // write data to buffer
 	}
 
 }
@@ -150,4 +146,5 @@ void uart_transmit(int uid, const char* data, int length)
 void uart_read(int uid, char* data, int length)
 {
         memcpy(data, (char*)(uart[uid].rx_buffer.data) + sizeof(uint16_t), length);
+		uart[uid].rx_buffer.pos = uart[uid].rx_buffer.length = 0;
 }

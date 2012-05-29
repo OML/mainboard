@@ -14,11 +14,7 @@ int main()
         initialize_bus();
 	
         while(1) {
-				
-               if(UART_EP_READY(uart[0].rx_buffer))
-					{
-						uart_transmit(0, (const char*)uart[0].rx_buffer.data, (int)uart[0].rx_buffer.length);
-					}
+      	 bus_do_work();
         }
 
 	return 0;
