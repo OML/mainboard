@@ -13,6 +13,8 @@ void initialize_bus(void)
         uint16_t addr = 0;
         volatile uint32_t start;
         struct bus_hello hello;
+        struct bus_hello_reply reply;
+
         struct bus_node* node;
 
         hello.hdr.opcode.op = BUSOP_HELLO;
@@ -21,7 +23,7 @@ void initialize_bus(void)
                 bus[i].layout = NULL;
                 bus[i].uart = &uart[i];
                 do {
-                        hello.hdr.addr = addr++;
+                        hello.hdr.addr = ++addr;
                 
                         start = rt_timer();
                         uart_transmit(i, (char*)&hello, sizeof(struct bus_hello));
@@ -34,7 +36,12 @@ void initialize_bus(void)
                                 break; // Timed out, no more devices
                         }
 
+                        uart_read(i, (char*)&reply, sizeof(struct bus_hello_reply));
+                        
                         node = (struct bus_node*)malloc(sizeof(struct bus_node));
+                        node->next = NULL;
+                        node->addr = addr;
+                        node->devtype = reply.devtype;
                 } while(1);
         }
 }
