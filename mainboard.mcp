@@ -32,6 +32,10 @@ file_004=.
 file_005=.
 file_006=.
 file_007=.
+file_008=.
+file_009=.
+file_010=.
+file_011=.
 [GENERATED_FILES]
 file_000=no
 file_001=no
@@ -41,6 +45,10 @@ file_004=no
 file_005=no
 file_006=no
 file_007=no
+file_008=no
+file_009=no
+file_010=no
+file_011=no
 [OTHER_FILES]
 file_000=no
 file_001=no
@@ -50,22 +58,30 @@ file_004=no
 file_005=no
 file_006=no
 file_007=no
+file_008=no
+file_009=no
+file_010=no
+file_011=no
 [FILE_INFO]
 file_000=src\main.c
 file_001=src\oscillator.c
 file_002=src\device.c
 file_003=src\uart.c
-file_004=src\device.h
-file_005=src\oscillator.h
-file_006=src\uart.h
-file_007=src\protocol.h
+file_004=src\bus.c
+file_005=src\timer.c
+file_006=src\device.h
+file_007=src\oscillator.h
+file_008=src\uart.h
+file_009=src\protocol.h
+file_010=src\bus.h
+file_011=src\timer.h
 [SUITE_INFO]
 suite_guid={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 suite_state=
 [TOOL_SETTINGS]
 TS{7D9C6ECE-785D-44CB-BA22-17BF2E119622}=-g
 TS{25AC22BD-2378-4FDB-BFB6-7345A15512D3}=-g -Wall
-TS{7DAC9A1D-4C45-45D6-B25A-D117C74E8F5A}=-o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)" -Map="$(BINDIR_)$(TARGETBASE).map" --report-mem
+TS{7DAC9A1D-4C45-45D6-B25A-D117C74E8F5A}=--heap=4096 -Map="$(BINDIR_)$(TARGETBASE).map" --report-mem -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
 TS{509E5861-1E2A-483B-8B6B-CA8DB7F2DD78}=
 [INSTRUMENTED_TRACE]
 enable=0
