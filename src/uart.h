@@ -13,12 +13,6 @@ struct uart_ep_buffer
         volatile int length;
 };
 
-#define UART_EP_READY(ep) \
-        (((ep).pos == (ep).length) && (ep).pos != 0)
-
-#define UART_RX_BUFFER_HAS_DATA(uart) \
-        (UART_EP_READY((uart).rx_buffer))
-
 struct uart_endpoint
 { 
         volatile unsigned int* rcreg;
@@ -33,7 +27,9 @@ void initialize_uart_buffer(struct uart_ep_buffer* b);
 void initialize_uarts(void);
 
 
-void uart_transmit(int uid, const char* data, int length);
-void uart_read(int uid, char* data, int length);
+void uart_write(struct uart_endpoint* ep, const char* data, int length);
+void uart_read(struct uart_endpoint* ep, char* data, int length);
+
+unsigned int uart_ep_bytes_available(struct uart_endpoint* ep);
 
 #endif /* src/uart.h */

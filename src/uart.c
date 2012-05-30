@@ -130,20 +130,27 @@ void initialize_uarts(void)
 	#undef BRG
 }
 
-void uart_transmit(int uid, const char* data, int length)
+void uart_write(struct uart_endpoint* ep, const char* data, int length)
 {
-	memcpy((char*)uart[uid].tx_buffer.data, data, length); // put the data in the buffer
+	memcpy((char*)ep->tx_buffer.data, data, length); // put the data in the buffer
 	int i;
 	for(i = 0; i < length; i++)
 	{
 		while(U1STAbits.UTXBF == 1);
-		*(uart[uid].txreg) = data[i]; // write data to buffer
+		*(ep->txreg) = data[i]; // write data to buffer
 	}
 
 }
 
-void uart_read(int uid, char* data, int length)
+void uart_read(struct uart_endpoint* ep, char* data, int length)
 {
-        memcpy(data, (char*)(uart[uid].rx_buffer.data) + sizeof(uint16_t), length);
-	uart[uid].rx_buffer.pos = uart[uid].rx_buffer.length = 0;
+        memcpy(data, (char*)ep->rx_buffer.data, length);
+        ep->rx_buffer.pos = ep->rx_buffer.length = 0;
+}
+
+unsigned int uart_ep_bytes_available(struct uart_endpoint* ep)
+{
+        if(ep->rx_buffer.pos == 0 || ep->rx_buffer.pos != ep->rx_buffer.length)
+                return 0;
+        return ep->rx_buffer.length;
 }

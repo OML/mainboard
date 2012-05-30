@@ -49,13 +49,11 @@ struct bus_hdr
 
 struct bus_hello
 {
-        struct bus_hdr hdr;
 } __attribute__((packed));
 
 
 struct bus_hello_reply
 {
-        struct bus_hdr hdr;
         bus_devtype_t devtype;
 } __attribute__((packed));
 

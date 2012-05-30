@@ -37,4 +37,8 @@ extern struct bus_descriptor bus[N_BUSSES];
 void initialize_bus(void);
 void bus_do_work(void);
 
+
+struct bus_hdr* get_buffer_header(const char* data);
+struct bus_hello* get_buffer_hello(const char* data);
+
 #endif /* src/bus.h */
