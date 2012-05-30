@@ -16,6 +16,9 @@ struct uart_ep_buffer
 #define UART_EP_READY(ep) \
         (((ep).pos == (ep).length) && (ep).pos != 0)
 
+#define UART_RX_BUFFER_HAS_DATA(uart) \
+        (UART_EP_READY((uart).rx_buffer))
+
 struct uart_endpoint
 { 
         volatile unsigned int* rcreg;
