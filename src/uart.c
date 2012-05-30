@@ -15,7 +15,7 @@ void _ISR __attribute__((no_auto_psv)) _U1RXInterrupt()
 
 	while(U1STAbits.URXDA == 1)
 	{
-		if(buf->pos == buf->length)
+		if(buf->pos == buf->length && buf->pos != 0)
 			buf->pos = 0;
 
 		buf->data[buf->pos] = U1RXREG;	
@@ -25,10 +25,12 @@ void _ISR __attribute__((no_auto_psv)) _U1RXInterrupt()
 		
 		buf->pos++;
 	}
+	IFS0bits.U1RXIF = 0;
 }
 
 void _ISR __attribute__((no_auto_psv)) _U1TXInterrupt()
 {
+	IFS0bits.U1TXIF = 0;
 }
 
 void initialize_uart_buffer(struct uart_ep_buffer* buf)
@@ -61,6 +63,7 @@ void init_buffers(void)
 void init_rps(void)
 {
 	RPOR1bits.RP3R = 3;				// U1TX
+	TRISDbits.TRISD10 = 0;			// Configure as output
 	RPINR18bits.U1RXR = 4;			// U1RX = RP4
 	RPOR3bits.RP6R = 5;				// U2TX
 	RPINR19bits.U2RXR = 7;			// U2RX
@@ -83,12 +86,12 @@ void init_interrupts(void)
 
 	IEC0bits.U1TXIE = 1;
 	IEC0bits.U1RXIE = 1;
-	IEC1bits.U2TXIE = 1;
+/*	IEC1bits.U2TXIE = 1;
 	IEC1bits.U2RXIE = 1;
 	IEC5bits.U3TXIE = 1;
 	IEC5bits.U3RXIE = 1;
 	IEC5bits.U4TXIE = 1;
-	IEC5bits.U4RXIE = 1;
+	IEC5bits.U4RXIE = 1;*/
 }
 
 void initialize_uarts(void)
@@ -97,27 +100,34 @@ void initialize_uarts(void)
 	init_buffers();
 	init_interrupts();
 
-	U1MODEbits.UARTEN = 0;
-	U2MODEbits.UARTEN = 0;
-	U3MODEbits.UARTEN = 0;
-	U4MODEbits.UARTEN = 0;
+	#define UMODEVAL 0x8000
+	#define USTAVAL 0x0420
+	#define BRG 51
+	//25
 
-	U1BRG = U2BRG = U3BRG = U4BRG = (FCY / (16 * BAUD))-1;
+	U1BRG = BRG;
+	U2BRG = BRG;
+	U3BRG = BRG;
+	U4BRG = BRG;
 
-	U1STAbits.URXISEL = 2;
-	U2STAbits.URXISEL = 2;
-	U3STAbits.URXISEL = 2;
-	U4STAbits.URXISEL = 2;
-	
-	U1STAbits.UTXEN = 1;
-	U2STAbits.UTXEN = 1;
-	U3STAbits.UTXEN = 1;
-	U4STAbits.UTXEN = 1;
+	U1MODE = UMODEVAL;
+	U2MODE = UMODEVAL;
+	U3MODE = UMODEVAL;
+	U4MODE = UMODEVAL;
 
-	U1MODEbits.UARTEN = 1;
-	U2MODEbits.UARTEN = 1;
-	U3MODEbits.UARTEN = 1; 
-	U4MODEbits.UARTEN = 1;
+	U1STA = USTAVAL;	
+	U2STA = USTAVAL;
+	U3STA = USTAVAL;
+	U4STA = USTAVAL;
+
+
+
+
+
+
+	#undef UMODEVAL
+	#undef USTAVAL
+	#undef BRG
 }
 
 void uart_transmit(int uid, const char* data, int length)
@@ -127,7 +137,7 @@ void uart_transmit(int uid, const char* data, int length)
 
 	for(i = 0; i < length; i++)
 	{
-		while(U1STAbits.UTXBF == 1);  // wait if buffer is full
+		while(U1STAbits.UTXBF == 1);
 		*(uart[uid].txreg) = data[i]; // write data to buffer
 	}
 
@@ -136,4 +146,5 @@ void uart_transmit(int uid, const char* data, int length)
 void uart_read(int uid, char* data, int length)
 {
         memcpy(data, (char*)(uart[uid].rx_buffer.data) + sizeof(uint16_t), length);
+		uart[uid].rx_buffer.pos = uart[uid].rx_buffer.length = 0;
 }
