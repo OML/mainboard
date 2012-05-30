@@ -1,7 +1,7 @@
 #ifndef _BUSPROT_H
 #define _BUSPROT_H
 
-#include <stdint.h>
+#include "device.h"
 
 typedef uint16_t bus_addr_t;
 typedef uint16_t bus_devtype_t;
@@ -32,8 +32,7 @@ struct bus_opc
 struct bus_header
 {
         struct bus_opc opcode;
-        bus_addr_t saddr;
-        bus_addr_t daddr;
+        bus_addr_t addr;
 } __attribute__((packed));
 
 
