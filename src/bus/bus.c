@@ -7,6 +7,23 @@
 
 struct bus_descriptor bus[N_BUSSES];
 
+void bus_descriptor_add_node(struct bus_descriptor* desc, 
+                                struct bus_node* node)
+{
+        struct bus_node* iter;
+
+        if(desc->layout == NULL)  {
+                desc->layout = node;
+                return;
+        }
+        
+        iter = desc->layout;
+        while(iter->next != NULL)
+                iter = iter->next;
+        iter->next = node;
+}
+
+
 void initialize_bus(void)
 {
         int i;
