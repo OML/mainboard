@@ -65,14 +65,12 @@ struct bus_event_hdr
 
 struct bus_set_thresholds
 {
-        struct bus_event_hdr event;
         struct event_thresholds thresholds;
 } __attribute__((packed));
 
 
 struct bus_set_motor_driver
 {
-        struct bus_event_hdr event;
         throttle_t motors[2];
 } __attribute__((packed));
 
