@@ -48,4 +48,16 @@ void initialize_bus(void)
 
 void bus_do_work(void)
 {
+
+/*
+Wat hier moet gebeuren:
+Als hier binnenkomt motor 3 = 100% en vooruit,
+dan moet hij zelf uitzoeken welke module motor 3 is,
+dan moet hij er 100% naartoe sturen.
+dit geld ook voor andere modules
+
+MOET HIER OOK ONTVANGEN WORDEN? ja
+
+*/
 }
+
