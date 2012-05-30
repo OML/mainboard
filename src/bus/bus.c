@@ -33,7 +33,7 @@ struct bus_node* ipc_ptr;
 void initialize_bus(void)
 {
         int i;
-        uint16_t addr = 0;
+        uint16_t addr = 1;
         volatile uint32_t start;
         
         struct bus_hdr* header;
@@ -109,11 +109,11 @@ struct bus_hello_reply* get_buffer_hello_reply(const char* data)
 
 static void bus_send_packet(struct bus_descriptor* bus, const char* data, unsigned int len)
 {
-        uint16_t tot_len = len + 2;
+        uint16_t tot_len = len + sizeof(uint16_t);
         char tot_data[tot_len];
-        memcpy(&tot_data, &tot_len, sizeof(uint16_t));
-        memcpy(&tot_data + sizeof(uint16_t), data, len);
-        uart_write(bus->uart, data, len); 
+        memcpy((char*)&tot_data, &tot_len, sizeof(uint16_t));
+        memcpy(((char*)&tot_data) + sizeof(uint16_t), data, len);
+        uart_write(bus->uart, tot_data, tot_len); 
 }
 
 static void bus_read_packet(struct bus_descriptor* desc, char* data, unsigned int len)

@@ -139,7 +139,7 @@ void uart_write(struct uart_endpoint* ep, const char* data, int length)
 		while(U1STAbits.UTXBF == 1);
 		*(ep->txreg) = data[i]; // write data to buffer
 	}
-
+        __builtin_nop();
 }
 
 void uart_read(struct uart_endpoint* ep, char* data, int length)
