@@ -18,15 +18,19 @@ struct bus_node
         uint16_t addr;
 };
 
-void bus_descriptor_add_node(struct bus_descriptor* desc, 
-                                struct bus_node* node);
-
 struct bus_descriptor
 {
         struct uart_endpoint* uart;
         
         struct bus_node* layout;       
 };
+
+void bus_descriptor_add_node(struct bus_descriptor* desc, 
+                                struct bus_node* node);
+
+
+
+
 
 extern struct bus_descriptor bus[N_BUSSES];
 

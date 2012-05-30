@@ -40,7 +40,8 @@ void initialize_bus(void)
                 bus[i].layout = NULL;
                 bus[i].uart = &uart[i];
                 do {
-                        hello.hdr.addr = ++addr;
+                        hello.hdr.saddr = 0;
+                        hello.hdr.daddr = ++addr;
                 
                         start = rt_timer();
                         uart_transmit(i, (char*)&hello, sizeof(struct bus_hello));
@@ -59,22 +60,13 @@ void initialize_bus(void)
                         node->next = NULL;
                         node->addr = addr;
                         node->devtype = reply.devtype;
+
+                        bus_descriptor_add_node(&bus[i], node);
                 } while(1);
         }
 }
 
 void bus_do_work(void)
 {
-
-/*
-Wat hier moet gebeuren:
-Als hier binnenkomt motor 3 = 100% en vooruit,
-dan moet hij zelf uitzoeken welke module motor 3 is,
-dan moet hij er 100% naartoe sturen.
-dit geld ook voor andere modules
-
-MOET HIER OOK ONTVANGEN WORDEN? ja
-
-*/
 }
 

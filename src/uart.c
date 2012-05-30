@@ -44,9 +44,9 @@ void init_buffers(void)
 {
 	int i;
 
-    uart[0].rcreg = &U1RXREG;
+        uart[0].rcreg = &U1RXREG;
 	uart[1].rcreg = &U2RXREG;
-    uart[2].rcreg = &U3RXREG;
+        uart[2].rcreg = &U3RXREG;
 	uart[3].rcreg = &U4RXREG;
 
 	uart[0].txreg = &U1TXREG;
@@ -132,7 +132,8 @@ void initialize_uarts(void)
 
 void uart_transmit(int uid, const char* data, int length)
 {
-	memcpy((char*)uart[uid].tx_buffer.data, data, length); // put the data in the buffer
+        *(uint16_t*)&(uart[uid].tx_buffer.data) = length;
+	memcpy((char*)(uart[uid].tx_buffer.data) + 2, data, length); // put the data in the buffer
 	int i;
 
 	for(i = 0; i < length; i++)
@@ -146,5 +147,5 @@ void uart_transmit(int uid, const char* data, int length)
 void uart_read(int uid, char* data, int length)
 {
         memcpy(data, (char*)(uart[uid].rx_buffer.data) + sizeof(uint16_t), length);
-		uart[uid].rx_buffer.pos = uart[uid].rx_buffer.length = 0;
+	uart[uid].rx_buffer.pos = uart[uid].rx_buffer.length = 0;
 }
