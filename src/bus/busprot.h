@@ -25,6 +25,7 @@ enum
         BUSOP_EVENT,
         BUSOP_DONE,
         BUSOP_ACQUIRE_ADDRESS,
+        BUSOP_SET_THRESHOLDS
 };
 
 
