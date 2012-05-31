@@ -11,6 +11,10 @@ struct bus_descriptor busses[N_BUSSES];
 static void bus_send_packet(struct bus_descriptor* desc, const char* data, unsigned int length);
 static void bus_read_packet(struct bus_descriptor* desc, char* data, unsigned int length);
 
+static int send_hello(struct bus_descriptor* bus);
+
+uint16_t addresses = 1;
+
 void bus_descriptor_add_node(struct bus_descriptor* desc, 
                                 struct bus_node* new_node)
 {
@@ -27,66 +31,68 @@ void bus_descriptor_add_node(struct bus_descriptor* desc,
         iter->next = new_node;
 }
 
-struct bus_node ipc_node;
-struct bus_node* ipc_ptr;
 
-void initialize_bus(void)
+static int send_hello(struct bus_descriptor* bus)
 {
-        int i;
-        uint16_t addr = 1;
         volatile uint32_t start;
         
         struct bus_hdr* header;
         struct bus_hello* hello;
         struct bus_hello_reply* hello_reply;
-        struct bus_descriptor* current;
-        
-        int hello_reply_len = sizeof(struct bus_hdr) + sizeof(struct bus_hello_reply);
+        struct bus_node* node;
 
+
+        int hello_reply_len = sizeof(struct bus_hdr) + sizeof(struct bus_hello_reply);
         char rx_buffer[hello_reply_len];
         hello_reply = get_buffer_hello_reply(rx_buffer);
+
         
         int hello_request_len = sizeof(struct bus_hdr) + sizeof(struct bus_hello);
         char tx_buffer[hello_request_len];
         hello = get_buffer_hello(tx_buffer);
         header = get_buffer_header(tx_buffer);
 
-        while(rt_timer() < 2000); // wait 2 seconds
 
-        struct bus_node* node;
 
         header->opcode.op = BUSOP_HELLO;
+        header->saddr = 0;
+        header->daddr = ++addresses;
+                
+                         
+        start = rt_timer();
+        bus_send_packet(bus, tx_buffer, hello_request_len);
+        while(rt_timer() - start < BUS_TIMEOUT) {
+                if(uart_ep_bytes_available(bus->uart))
+                        break;
+        }
+        
+        if(uart_ep_bytes_available(bus->uart) == 0)
+                return 0; // Timeout
+
+        bus_read_packet(bus, rx_buffer, hello_reply_len);
+                        
+        node = (struct bus_node*)malloc(sizeof(struct bus_node));
+        node->next = NULL;
+        node->addr = addresses;
+        node->devtype = hello_reply->devtype;
+
+        bus_descriptor_add_node(bus, node);
+
+        return 1;
+}
+
+
+void initialize_bus(void)
+{
+        int i;
+        struct bus_descriptor* bus;
+        while(rt_timer() < 2000); // wait 2 seconds
 
         for(i = 0; i < N_BUSSES; i++) {
-                current = &busses[i];
-                current->layout = NULL;
-                current->uart = &uart[i];
-                do {
-                        header->saddr = 0;
-                        header->daddr = ++addr;
-                
-                        start = rt_timer();
-                        bus_send_packet(current, tx_buffer, hello_request_len);
-                        while(rt_timer() - start < BUS_TIMEOUT) {
-                                if(uart_ep_bytes_available(current->uart))
-                                        break;
-                        }
-        
-                        if(uart_ep_bytes_available(current->uart) == 0)
-                                break; // Timed out, no more devices
-
-                        bus_read_packet(current, rx_buffer, hello_reply_len);
-                        
-                        node = (struct bus_node*)malloc(sizeof(struct bus_node));
-                        node->next = NULL;
-                        node->addr = addr;
-                        node->devtype = hello_reply->devtype;
-
-                        ipc_node = *node;
-                        ipc_ptr = node;
-
-                        bus_descriptor_add_node(current, node);
-                } while(1);
+                busses[i].layout = NULL;
+                busses[i].uart = &uart[i];
+                bus = &(busses[i]);
+                while(send_hello(bus) != 0);
         }
 }
 
@@ -149,6 +155,7 @@ static void forward_packet(char* data, unsigned int len)
 
 }
 
+
 void bus_do_work(void)
 {
         int bus_id;
@@ -168,6 +175,8 @@ void bus_do_work(void)
 
                         hdr = get_buffer_header(buffer + sizeof(uint16_t));
                         if(hdr->daddr == 0) {
+                                if(hdr->opcode.op == BUSOP_ACQUIRE_ADDRESS)
+                                        send_hello(src_bus);
                         }                   
                         else
                                 forward_packet(buffer, len);  

@@ -6,25 +6,24 @@
 
 struct uart_endpoint uart[4];
 
+static void read_uart(int id)
+{
+	struct uart_ep_buffer* buf = &uart[id].rx_buffer;
 	
+        if(buf->pos == buf->length && buf->pos != 0)
+		buf->pos = 0;
+
+	buf->data[buf->pos] = *(uart[id].rcreg);	
+
+	if(buf->pos == 1)
+		buf->length = le16toh(*(uint16_t*)&buf->data);
+		
+	buf->pos++;
+}	
 
 void _ISR __attribute__((no_auto_psv)) _U1RXInterrupt()
 {  
-	
-	struct uart_ep_buffer* buf = &uart[0].rx_buffer;
-
-	while(U1STAbits.URXDA == 1)
-	{
-		if(buf->pos == buf->length && buf->pos != 0)
-			buf->pos = 0;
-
-		buf->data[buf->pos] = U1RXREG;	
-
-		if(buf->pos == 1)
-			buf->length = le16toh(*(uint16_t*)&buf->data); //make this buffer an integer
-		
-		buf->pos++;
-	}
+        read_uart(0);
 	IFS0bits.U1RXIF = 0;
 }
 
@@ -32,6 +31,21 @@ void _ISR __attribute__((no_auto_psv)) _U1TXInterrupt()
 {
 	IFS0bits.U1TXIF = 0;
 }
+
+
+
+void _ISR __attribute__((no_auto_psv)) _U2RXInterrupt()
+{  
+        read_uart(1);
+	IFS1bits.U2RXIF = 0;
+}
+
+void _ISR __attribute__((no_auto_psv)) _U2TXInterrupt()
+{
+	IFS1bits.U2TXIF = 0;
+}
+
+
 
 void initialize_uart_buffer(struct uart_ep_buffer* buf)
 {
@@ -54,6 +68,11 @@ void init_buffers(void)
 	uart[2].txreg = &U3TXREG;
 	uart[3].txreg = &U4TXREG;
 
+        uart[0].stareg = &U1STA;
+        uart[1].stareg = &U2STA;
+        uart[2].stareg = &U3STA;
+        uart[3].stareg = &U4STA;
+
 	for(i = 0; i < 4; i++) {
                 initialize_uart_buffer(&uart[i].tx_buffer);
                 initialize_uart_buffer(&uart[i].rx_buffer);
@@ -62,15 +81,21 @@ void init_buffers(void)
 
 void init_rps(void)
 {
-	RPOR1bits.RP3R = 3;				// U1TX
+	RPOR1bits.RP3R = 3;			// U1TX
 	TRISDbits.TRISD10 = 0;			// Configure as output
 	RPINR18bits.U1RXR = 4;			// U1RX = RP4
-	RPOR3bits.RP6R = 5;				// U2TX
+
+	RPOR3bits.RP6R = 5;			// U2TX
 	RPINR19bits.U2RXR = 7;			// U2RX
-	RPOR4bits.RP8R = 28;	        // U3TX
+        TRISFbits.TRISF8 = 0;                   // Configure as output
+                                       
+	RPOR4bits.RP8R = 28;	                // U3TX
 	RPINR17bits.U3RXR = 9;			// U3RX
-	RPOR5bits.RP10R = 30;	        // U4TX
+        TRISBbits.TRISB8;                       // Idem
+
+	RPOR5bits.RP10R = 30;	                // U4TX
 	RPINR27bits.U4RXR = 17; 		// U4RX
+        TRISFbits.TRISF4 = 0;                   // Idem
 }
 
 void init_interrupts(void)
@@ -86,9 +111,9 @@ void init_interrupts(void)
 
 	IEC0bits.U1TXIE = 1;
 	IEC0bits.U1RXIE = 1;
-/*	IEC1bits.U2TXIE = 1;
+	IEC1bits.U2TXIE = 1;
 	IEC1bits.U2RXIE = 1;
-	IEC5bits.U3TXIE = 1;
+/*	IEC5bits.U3TXIE = 1;
 	IEC5bits.U3RXIE = 1;
 	IEC5bits.U4TXIE = 1;
 	IEC5bits.U4RXIE = 1;*/
@@ -132,14 +157,14 @@ void initialize_uarts(void)
 
 void uart_write(struct uart_endpoint* ep, const char* data, int length)
 {
+        __builtin_nop();
 	memcpy((char*)ep->tx_buffer.data, data, length); // put the data in the buffer
 	int i;
 	for(i = 0; i < length; i++)
 	{
-		while(U1STAbits.UTXBF == 1);
+                while(*(ep->stareg) & (1 << 9));
 		*(ep->txreg) = data[i]; // write data to buffer
 	}
-        __builtin_nop();
 }
 
 void uart_read(struct uart_endpoint* ep, char* data, int length)

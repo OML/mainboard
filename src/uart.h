@@ -17,6 +17,7 @@ struct uart_endpoint
 { 
         volatile unsigned int* rcreg;
         volatile unsigned int* txreg;
+        volatile unsigned int* stareg;
         struct uart_ep_buffer rx_buffer;
         struct uart_ep_buffer tx_buffer;
 };
