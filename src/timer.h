@@ -3,8 +3,8 @@
 
 #include "device.h"
 
-uint32_t rt_timer(void);
+uint32_t rt_clock(void);
 
-void timer_start(void);
+void clock_start(void);
 
 #endif /* timer.h */

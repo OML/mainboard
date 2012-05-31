@@ -1,20 +1,20 @@
 #include "timer.h"
 #include "device.h"
 
-volatile uint32_t rt_timer_val;
+volatile uint32_t rt_clock_val;
 
 void _ISR __attribute__((no_auto_psv)) _T2Interrupt(void)
 {
-        rt_timer_val++;
+        rt_clock_val++;
         IFS0bits.T2IF = 0;
 }
 
-uint32_t rt_timer(void)
+uint32_t rt_clock(void)
 {
-        return rt_timer_val;
+        return rt_clock_val;
 }
 
-void timer_start(void)
+void clock_start(void)
 {
         T2CONbits.TCKPS = 2; // Prescaler 64
         T2CONbits.TON = 1;
