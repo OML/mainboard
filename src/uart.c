@@ -17,9 +17,9 @@ void uart_init(struct uart_descriptor* uart, size_t uid)
 
         switch(uid) {
                 case 0:
-	                RPOR1bits.RP3R = 3;			// U1TX
-	                TRISDbits.TRISD10 = 0;			// Configure as output
-	                RPINR18bits.U1RXR = 4;			// U1RX = RP4
+	                RPOR1bits.RP3R = 3;	/* U1TX */
+	                TRISDbits.TRISD10 = 0;	/* Configure as output */
+	                RPINR18bits.U1RXR = 4;	/* U1RX = RP4 */
 
 	                IFS0bits.U1TXIF = 0;
 	                IFS0bits.U1RXIF = 0;
@@ -33,9 +33,9 @@ void uart_init(struct uart_descriptor* uart, size_t uid)
                         break;
 
                 case 1:
-	                RPOR3bits.RP6R = 5;			// U2TX
-	                RPINR19bits.U2RXR = 7;			// U2RX
-                        TRISFbits.TRISF8 = 0;                   // Configure as output
+	                RPOR3bits.RP6R = 5;	/* U2TX */
+	                RPINR19bits.U2RXR = 7;	/* U2RX */
+                        TRISFbits.TRISF8 = 0;   /* Configure as output */
                        
 	                IFS1bits.U2TXIF = 0;
                 	IFS1bits.U2RXIF = 0;
@@ -49,9 +49,9 @@ void uart_init(struct uart_descriptor* uart, size_t uid)
                         break;
 
                 case 2:
-                       	RPOR4bits.RP8R = 28;	                // U3TX
-                       	RPINR17bits.U3RXR = 9;			// U3RX
-                        TRISBbits.TRISB8;                       // Idem
+                       	RPOR4bits.RP8R = 28;    /* U3TX */
+                       	RPINR17bits.U3RXR = 9;	/* U3RX */
+                        TRISBbits.TRISB8;       /* Idem */
 
                         IFS5bits.U3TXIF = 0;
                         IFS5bits.U3RXIF = 0;
@@ -65,9 +65,9 @@ void uart_init(struct uart_descriptor* uart, size_t uid)
                         break;
         
                 case 3:
-                        RPOR5bits.RP10R = 30;	                // U4TX
-	                RPINR27bits.U4RXR = 17; 		// U4RX
-                        TRISFbits.TRISF4 = 0;                   // Idem
+                        RPOR5bits.RP10R = 30;   /* U4TX */
+	                RPINR27bits.U4RXR = 17; /* U4RX */
+                        TRISFbits.TRISF4 = 0;   /* Idem */
 
                         IFS5bits.U4TXIF = 0;
                 	IFS5bits.U4RXIF = 0;
