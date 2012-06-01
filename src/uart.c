@@ -30,6 +30,10 @@ void uart_init(struct uart_descriptor* uart, size_t uid)
 	                U1BRG = BRG;
 	                U1MODE = UMODEVAL;
 	                U1STA = USTAVAL;
+
+                        uart->txreg = &U1TXREG;
+                        uart->rxreg = &U1RXREG;
+                        uart->stareg = &U1STA;
                         break;
 
                 case 1:
@@ -46,6 +50,10 @@ void uart_init(struct uart_descriptor* uart, size_t uid)
 	                U2BRG = BRG;
 	                U2MODE = UMODEVAL;
 	                U2STA = USTAVAL;
+
+                        uart->txreg = &U2TXREG;
+                        uart->rxreg = &U2RXREG;
+                        uart->stareg = &U2STA;
                         break;
 
                 case 2:
@@ -62,6 +70,10 @@ void uart_init(struct uart_descriptor* uart, size_t uid)
                         U3BRG = BRG;
 	                U3MODE = UMODEVAL;
 	                U3STA = USTAVAL;
+
+                        uart->txreg = &U3TXREG;
+                        uart->rxreg = &U3RXREG;
+                        uart->stareg = &U3STA;
                         break;
         
                 case 3:
@@ -78,6 +90,10 @@ void uart_init(struct uart_descriptor* uart, size_t uid)
                         U4BRG = BRG;
 	                U4MODE = UMODEVAL;
 	                U4STA = USTAVAL;
+
+                        uart->txreg = &U4TXREG;
+                        uart->rxreg = &U4RXREG;
+                        uart->stareg = &U4STA;
                         break;
                 default:
                         break;
