@@ -40,7 +40,9 @@ void uart_init(struct uart_descriptor* uart, size_t uid)
 	                RPOR3bits.RP6R = 5;	/* U2TX */
 	                RPINR19bits.U2RXR = 7;	/* U2RX */
                         TRISFbits.TRISF8 = 0;   /* Configure as output */
-                       
+ 
+                        AD1PCFGLbits.PCFG7 = 1;
+                      
 	                IFS1bits.U2TXIF = 0;
                 	IFS1bits.U2RXIF = 0;
 
@@ -60,6 +62,8 @@ void uart_init(struct uart_descriptor* uart, size_t uid)
                        	RPOR4bits.RP8R = 28;    /* U3TX */
                        	RPINR17bits.U3RXR = 9;	/* U3RX */
                         TRISBbits.TRISB8;       /* Idem */
+
+                        AD1PCFGLbits.PCFG9 = 1;
 
                         IFS5bits.U3TXIF = 0;
                         IFS5bits.U3RXIF = 0;
@@ -104,10 +108,15 @@ void uart_init(struct uart_descriptor* uart, size_t uid)
 	#undef BRG
 }
 
-
+volatile uint32_t u1timer = 0;
 void _ISR __attribute__((no_auto_psv)) _U1RXInterrupt()
 {  
+        if(rt_clock() - u1timer > 20) {
+                uarts[0]->rx_ep.pos = 0;
+                uarts[0]->rx_ep.len = 0;
+        }
         uart_has_byte_available(uarts[0]);
+        u1timer = rt_clock();
 	IFS0bits.U1RXIF = 0;
 }
 
@@ -117,10 +126,15 @@ void _ISR __attribute__((no_auto_psv)) _U1TXInterrupt()
 }
 
 
-
+volatile uint32_t u2timer = 0;
 void _ISR __attribute__((no_auto_psv)) _U2RXInterrupt()
 {  
+        if(rt_clock() - u2timer > 20) {
+                uarts[1]->rx_ep.pos = 0;
+                uarts[1]->rx_ep.len = 0;
+        }
         uart_has_byte_available(uarts[1]);
+        u2timer = rt_clock();
 	IFS1bits.U2RXIF = 0;
 }
 
@@ -130,10 +144,15 @@ void _ISR __attribute__((no_auto_psv)) _U2TXInterrupt()
 }
 
 
-
+volatile uint32_t u3timer = 0;
 void _ISR __attribute__((no_auto_psv)) _U3RXInterrupt()
 {  
+        if(rt_clock() - u3timer > 20) {
+                uarts[2]->rx_ep.pos = 0;
+                uarts[2]->rx_ep.len = 0;
+        }
         uart_has_byte_available(uarts[2]);
+        u3timer = rt_clock();
 	IFS5bits.U3RXIF = 0;
 }
 
@@ -143,10 +162,15 @@ void _ISR __attribute__((no_auto_psv)) _U3TXInterrupt()
 }
 
 
-
+volatile uint32_t u4timer = 0;
 void _ISR __attribute__((no_auto_psv)) _U4RXInterrupt()
 {  
+        if(rt_clock() - u4timer > 20) {
+                uarts[3]->rx_ep.pos = 0;
+                uarts[3]->rx_ep.len = 0;
+        }
         uart_has_byte_available(uarts[3]);
+        u4timer = rt_clock();
 	IFS5bits.U4RXIF = 0;
 }
 

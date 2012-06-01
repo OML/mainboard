@@ -7,6 +7,8 @@
 
 #include <bus.h>
 
+uint8_t u;
+
 int main()
 {
         clock_start();
