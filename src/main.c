@@ -11,7 +11,7 @@ int main()
 {
         clock_start();
 
-        bus_init(N_UARTS);
+        bus_init(N_UARTS, DT_ROOT);
 
         while(1) {
       	        bus_do_work();
